@@ -7,23 +7,26 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Primary;
-import org.springframework.context.annotation.Import;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+
+import org.springframework.boot.test.context.SpringBootTest;
+
+
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.Collections;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.httpBasic;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@WebMvcTest(UserController.class)
-@Import(UserControllerTest.MockServiceConfig.class)
+
+@SpringBootTest
+@AutoConfigureMockMvc
 public class UserControllerTest {
 
     @Autowired
@@ -40,68 +43,65 @@ public class UserControllerTest {
     @BeforeEach
     public void setUp() {
         sampleUser = new User();
-        sampleUser.setUserId("u123");
+        sampleUser.setUserId("user123");
         sampleUser.setFirstName("John");
-        sampleUser.setLastName("Doe");
-        sampleUser.setEmailAddress("john.doe@example.com");
+        sampleUser.setLastName("Smith");
+        sampleUser.setEmailAddress("john.smith@example.com");
+        sampleUser.setSupervisorUserId("sup1");
     }
 
     @Test
+    @WithMockUser(username = "admin", roles = "ADMIN")
     public void testCreateUser() throws Exception {
         Mockito.when(userService.createUser(any(User.class))).thenReturn(sampleUser);
 
         mockMvc.perform(post("/users")
+                        .with(httpBasic("admin", "adminpassword"))  // ✅ Add basic auth
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(sampleUser)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.userId").value("u123"));
+                .andExpect(jsonPath("$.userId").value("user123"));
     }
 
     @Test
+    @WithMockUser(username = "user", roles = "USER")
     public void testUpdateUser() throws Exception {
-        Mockito.when(userService.updateUser(eq("u123"), any(User.class))).thenReturn(sampleUser);
+        Mockito.when(userService.updateUser(eq("user23"), any(User.class))).thenReturn(sampleUser);
 
-        mockMvc.perform(put("/users/u123")
+        mockMvc.perform(put("/users/user123").with(httpBasic("admin", "adminpassword"))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(sampleUser)))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.userId").value("u123"));
+                .andExpect(jsonPath("$.userId").value("user123"));
     }
 
     @Test
+    @WithMockUser(username = "admin", roles = "ADMIN")
     public void testDeleteUser() throws Exception {
-        Mockito.doNothing().when(userService).deleteUser("u123");
-
-        mockMvc.perform(delete("/users/u123"))
+        Mockito.doNothing().when(userService).deleteUser("user123");
+        mockMvc.perform(delete("/users/user123") .with(httpBasic("admin", "adminpassword")))
                 .andExpect(status().isNoContent());
     }
 
     @Test
+    @WithMockUser(username = "user", roles = "USER")
     public void testGetUsersBySupervisor() throws Exception {
         Mockito.when(userService.getUsersBySupervisor("sup1")).thenReturn(Collections.singletonList(sampleUser));
 
-        mockMvc.perform(get("/users/supervisor/sup1"))
+        mockMvc.perform(get("/users/supervisor/sup1").with(httpBasic("user", "password")))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].userId").value("u123"));
+                .andExpect(jsonPath("$[0].userId").value("user123"));
     }
 
     @Test
     public void testUpdateSupervisor() throws Exception {
-        sampleUser.setSupervisorUserId("sup1");
-        Mockito.when(userService.updateSupervisor("u123", "sup1")).thenReturn(sampleUser);
+        sampleUser.setSupervisorUserId("sup2");
+        Mockito.when(userService.updateSupervisor("user123", "sup2")).thenReturn(sampleUser);
 
-        mockMvc.perform(put("/users/u123/supervisor/sup1"))
+        mockMvc.perform(put("/users/user123/supervisor/sup2").with(httpBasic("user", "password")))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$.supervisorUserId").value("sup1"));
+                .andExpect(jsonPath("$.supervisorUserId").value("sup2"));
     }
 
-    @TestConfiguration
-    static class MockServiceConfig {
 
-        @Bean
-        @Primary
-        public UserService userService() {
-            return Mockito.mock(UserService.class);
-        }
-    }
 }
