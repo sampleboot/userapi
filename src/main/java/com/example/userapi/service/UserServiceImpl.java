@@ -56,6 +56,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public User updateSupervisor(String userId, String supervisorUserId) {
+        //Assuming Valid supervisorUserId is sent .it should also be validated
         User user = userRepository.findByUserId(userId);
         if(ObjectUtils.isEmpty(user) ){
             throw new UserNotFoundException("User with ID " + userId + " not found");
