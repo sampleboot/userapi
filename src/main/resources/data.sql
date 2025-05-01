@@ -13,5 +13,7 @@ INSERT INTO address (
     id, mobile_phone, other_phone, location, street_address, street_address_2,
     city, state, postal_code, country_code, user_id
 ) VALUES
-      (1, '123-456-7890', null, 'HQ', '123 Main St', null, 'Washington', 'DC', '20001', 'US', 2),
-      (2, '234-567-8901', null, 'Remote', '456 Elm St', 'Apt 2', 'Arlington', 'VA', '22201', 'US', 3);
+      (1, '123-456-7890', null, 'HQ', '123 Main St', null, 'Washington', 'DC', '20001', 'US', 	2),
+      (2, '234-567-8901', null, 'Remote', '456 Elm St', 'Apt 2', 'Arlington', 'VA', '22201', 'US', 3),
+      (3, '234-596-8001', null, 'HQ', '123 Main St', 'Apt 2', 'Arlington', 'VA', '22201', 'US', 1);
+;

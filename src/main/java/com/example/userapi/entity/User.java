@@ -16,7 +16,7 @@ public class User {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "user_id", nullable = false, length = 30)
+    @Column(name = "user_id", unique = true,nullable = false, length = 30)
     private String userId;
 
     @Column(name = "last_name", nullable = false, length = 100)
@@ -46,7 +46,8 @@ public class User {
     @Column(name = "update_dttm", nullable = false)
     private LocalDateTime updateDttm = LocalDateTime.now();
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
-    private List<Address> addresses;
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+     private List<Address> addresses;
+
 }
 

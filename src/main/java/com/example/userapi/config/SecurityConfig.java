@@ -22,11 +22,11 @@ public class SecurityConfig {
     public UserDetailsService userDetailsService() {
         var manager = new InMemoryUserDetailsManager();
         manager.createUser(User.withUsername("admin")
-                .password("{adminpassword")
+                .password("{noop}adminpassword")
                 .roles("ADMIN")
                 .build());
         manager.createUser(User.withUsername("user")
-                .password("password")
+                .password("{noop}password")
                 .roles("USER")
                 .build());
         return manager;

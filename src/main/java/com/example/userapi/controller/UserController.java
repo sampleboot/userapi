@@ -1,5 +1,6 @@
 package com.example.userapi.controller;
 
+import com.example.userapi.dto.UserDTO;
 import com.example.userapi.entity.User;
 import com.example.userapi.service.UserService;
 import org.springframework.http.ResponseEntity;
@@ -41,8 +42,9 @@ public class UserController {
 
     // Get users under a supervisor
     @GetMapping("/supervisor/{supervisorUserId}")
-    public ResponseEntity<List<User>> getUsersBySupervisor(@PathVariable String supervisorUserId) {
-        return ResponseEntity.ok(userService.getUsersBySupervisor(supervisorUserId));
+    public ResponseEntity <UserDTO>getUsersBySupervisor(@PathVariable String supervisorUserId) {
+       List<UserDTO> userDTOList=userService.getUsersBySupervisor(supervisorUserId);
+    return ResponseEntity.ok(userDTOList);
     }
 
     // Update a user's supervisor

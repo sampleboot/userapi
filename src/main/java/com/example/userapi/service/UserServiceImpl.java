@@ -1,13 +1,17 @@
 package com.example.userapi.service;
 
+import com.example.userapi.dto.UserDTO;
 import com.example.userapi.entity.User;
 import com.example.userapi.exception.UserNotFoundException;
+import com.example.userapi.mapper.UserMapper;
 import com.example.userapi.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -52,8 +56,12 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<User> getUsersBySupervisor(String supervisorUserId) {
-        return userRepository.findBySupervisorUserId(supervisorUserId);
+    public List<UserDTO> getUsersBySupervisor(String supervisorUserId) {
+        List<User> users = userRepository.findBySupervisorUserId(supervisorUserId);
+        System.out.println(users);
+        return users.stream()
+                .map(u->new UserMapper().toDTO(u))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -65,5 +73,16 @@ public class UserServiceImpl implements UserService {
         }
         user.setSupervisorUserId(supervisorUserId);
         return userRepository.save(user);
+    }
+
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
+    }
+    public User saveUser(User user) {
+        return userRepository.save(user);
+    }
+
+    public User getUserById(Integer id) {
+        return userRepository.findById(id).orElse(null);
     }
 }
