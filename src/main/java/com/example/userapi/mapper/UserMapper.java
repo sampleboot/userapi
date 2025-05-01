@@ -24,9 +24,9 @@ public class UserMapper {
         dto.setUpdateUserId(user.getUpdateUserId());
         dto.setUpdateDttm(user.getUpdateDttm());
 
-      // if (user.getAddresses() != null) {
-          //  dto.setAddresses(user.getAddresses().stream().map(UserMapper::toAddressDTO).collect(Collectors.toList()));
-     //   }
+       if (user.getAddresses() != null) {
+            dto.setAddresses(user.getAddresses().stream().map(UserMapper::toAddressDTO).collect(Collectors.toList()));
+        }
 
         return dto;
     }

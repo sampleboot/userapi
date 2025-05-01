@@ -1,6 +1,7 @@
 package com.example.userapi.controller;
 
 import com.example.userapi.entity.User;
+import com.example.userapi.mapper.UserMapper;
 import com.example.userapi.service.UserService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -50,14 +51,13 @@ public class UserControllerTest {
         sampleUser.setEmailAddress("john.smith@example.com");
         sampleUser.setSupervisorUserId("sup1");
     }
-/*
+
     @Test
     @WithMockUser(username = "admin", roles = "ADMIN")
     public void testCreateUser() throws Exception {
         Mockito.when(userService.createUser(any(User.class))).thenReturn(sampleUser);
 
         mockMvc.perform(post("/users")
-                        .with(httpBasic("admin", "adminpassword"))  // ✅ Add basic auth
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(sampleUser)))
                 .andExpect(status().isOk())
@@ -88,7 +88,7 @@ public class UserControllerTest {
     @WithMockUser(username = "user", roles = "USER")
     public void testGetUsersBySupervisor() throws Exception {
         Mockito.when(userService.getUsersBySupervisor("sup1"))
-                .thenReturn(Collections.singletonList(sampleUser));
+                .thenReturn(Collections.singletonList(new UserMapper().toDTO(sampleUser)));
 
         mockMvc.perform(get("/users/supervisor/sup1"))
                 .andExpect(status().isOk())
@@ -104,6 +104,6 @@ public class UserControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.supervisorUserId").value("sup2"));
     }
-*/
+
 
 }

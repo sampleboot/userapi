@@ -42,7 +42,7 @@ public class UserController {
 
     // Get users under a supervisor
     @GetMapping("/supervisor/{supervisorUserId}")
-    public ResponseEntity <UserDTO>getUsersBySupervisor(@PathVariable String supervisorUserId) {
+    public ResponseEntity <List<UserDTO>> getUsersBySupervisor(@PathVariable String supervisorUserId) {
        List<UserDTO> userDTOList=userService.getUsersBySupervisor(supervisorUserId);
     return ResponseEntity.ok(userDTOList);
     }
