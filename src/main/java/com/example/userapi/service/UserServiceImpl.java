@@ -3,6 +3,7 @@ package com.example.userapi.service;
 import com.example.userapi.entity.User;
 import com.example.userapi.exception.UserNotFoundException;
 import com.example.userapi.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
@@ -13,6 +14,7 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
+    @Autowired
     public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
