@@ -1,48 +1,84 @@
 package com.example.userapi.service;
 
 import com.example.userapi.dto.UserDTO;
+import com.example.userapi.entity.Address;
 import com.example.userapi.entity.User;
+import com.example.userapi.exception.DuplicateUserFoundException;
 import com.example.userapi.exception.UserNotFoundException;
+import com.example.userapi.mapper.AddressMapper;
 import com.example.userapi.mapper.UserMapper;
 import com.example.userapi.repository.UserRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
-import java.util.ArrayList;
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
-
+@Slf4j
 @Service
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
+    private final UserMapper userMapper;
+
+    private final AddressMapper addressMapper;
+
     @Autowired
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, UserMapper userMapper, AddressMapper addressMapper) {
         this.userRepository = userRepository;
+        this.userMapper = userMapper;
+        this.addressMapper = addressMapper;
     }
 
     @Override
-    public User createUser(User user) {
-        return userRepository.save(user);
-    }
+    public UserDTO createUser(UserDTO userDTO) {
 
-    @Override
-    public User updateUser(String userId, User user) {
-        User existingUser = userRepository.findByUserId(userId);
-        if(ObjectUtils.isEmpty(existingUser) ){
-            throw new UserNotFoundException("User with ID " + userId + " not found");
+        User existing=getUserByUserId(userDTO.getUserId());
+        if(!ObjectUtils.isEmpty(existing)){
+            throw new DuplicateUserFoundException("user already exists with userId");
         }
-        existingUser.setFirstName(user.getFirstName());
-        existingUser.setLastName(user.getLastName());
-        existingUser.setEmailAddress(user.getEmailAddress());
-        existingUser.setTitleText(user.getTitleText());
-        existingUser.setSupervisorUserId(user.getSupervisorUserId());
-        existingUser.setUpdateUserId(user.getUpdateUserId());
-        existingUser.setUpdateDttm(user.getUpdateDttm());
+        // Map UserDTO to User entity
+        User user = userMapper.toEntity(userDTO);
 
-        return userRepository.save(existingUser);
+        // Set user-related fields and timestamps
+        user.setCreateDttm(LocalDateTime.now());
+        user.setUpdateDttm(LocalDateTime.now());
+
+        // Handle addresses (set bi-directional relationship)
+        if (userDTO.getAddresses() != null) {
+            List<Address> addresses = addressMapper.toEntities(userDTO.getAddresses());
+            addresses.forEach(address -> address.setUser(user));  // Manually set the 'user' field
+            user.setAddresses(addresses);
+        }
+        return userMapper.toDTO(userRepository.save(user));
+
+    }
+
+    @Override
+    public UserDTO updateUser(String userId, UserDTO userDTO) {
+        User existingUser = getUserByUserId(userId);
+        if(ObjectUtils.isEmpty(existingUser) ){
+            throw new UserNotFoundException("User with UserId " + userId + " not found");
+        }
+        // Use MapStruct to update simple fields
+        userMapper.updateUserFromDto(userDTO, existingUser);
+        existingUser.setUpdateDttm(LocalDateTime.now());
+
+        // Handle address updates manually
+        if (userDTO.getAddresses() != null) {
+            // Clear old and re-add updated addresses
+            existingUser.getAddresses().clear();
+            List<Address> updatedAddresses = addressMapper.toEntities(userDTO.getAddresses());
+            updatedAddresses.forEach(address -> address.setUser(existingUser));
+            existingUser.getAddresses().addAll(updatedAddresses);
+        }
+        return userMapper.toDTO(userRepository.save(existingUser));
+
+
     }
 
     @Override
@@ -58,31 +94,33 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<UserDTO> getUsersBySupervisor(String supervisorUserId) {
         List<User> users = userRepository.findBySupervisorUserId(supervisorUserId);
-        System.out.println(users);
+        log.info("users by supervisor"+users);
         return users.stream()
-                .map(u->new UserMapper().toDTO(u))
+                .map(userMapper::toDTO)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public User updateSupervisor(String userId, String supervisorUserId) {
-        //Assuming Valid supervisorUserId is sent .it should also be validated
+    public UserDTO updateSupervisor(String userId, String supervisorUserId) {
         User user = userRepository.findByUserId(userId);
+        User supervisor = userRepository.findByUserId(supervisorUserId);
         if(ObjectUtils.isEmpty(user) ){
             throw new UserNotFoundException("User with ID " + userId + " not found");
         }
+        if(ObjectUtils.isEmpty(supervisor) ){
+            throw new UserNotFoundException("SuperVisor with ID " + userId + " not found");
+        }
         user.setSupervisorUserId(supervisorUserId);
-        return userRepository.save(user);
+        return userMapper.toDTO(userRepository.save(user));
     }
 
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+
+
+    public User getUserByUserId(String userId) {
+        return userRepository.findByUserId(userId);
     }
-    public User saveUser(User user) {
-        return userRepository.save(user);
+    public Optional<User> getUserById(Integer id) {
+        return userRepository.findById(id);
     }
 
-    public User getUserById(Integer id) {
-        return userRepository.findById(id).orElse(null);
-    }
 }

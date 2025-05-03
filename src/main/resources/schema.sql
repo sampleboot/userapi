@@ -1,4 +1,6 @@
 -- Table: user
+drop table address if exists;
+drop table "user" if exists;
 CREATE TABLE "user" (
                         id INT PRIMARY KEY AUTO_INCREMENT,
                         user_id VARCHAR(30) NOT NULL,
@@ -14,6 +16,7 @@ CREATE TABLE "user" (
 );
 
 -- Table: address
+
 CREATE TABLE address (
                          id INT PRIMARY KEY AUTO_INCREMENT,
                          mobile_phone VARCHAR(50),
@@ -28,3 +31,4 @@ CREATE TABLE address (
                          user_id INT,
                          CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES "user"(id) ON DELETE CASCADE
 );
+
