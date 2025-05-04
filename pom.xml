@@ -72,6 +72,12 @@
 			<scope>provided</scope>
 		</dependency>
 
+		<dependency>
+			<groupId>org.apache.commons</groupId>
+			<artifactId>commons-lang3</artifactId>
+			<version>3.17.0</version>
+		</dependency>
+
 		<!-- Testing -->
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -88,6 +94,19 @@
 			<artifactId>spring-restdocs-mockmvc</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>io.rest-assured</groupId>
+			<artifactId>rest-assured</artifactId>
+			<version>5.5.1</version>
+			<scope>test</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<version>2.8.4</version>
+		</dependency>
+
 	</dependencies>
 
 	<build>
@@ -164,6 +183,61 @@
 						<version>${spring-restdocs.version}</version>
 					</dependency>
 				</dependencies>
+			</plugin>
+			<plugin>
+				<groupId>org.jacoco</groupId>
+				<artifactId>jacoco-maven-plugin</artifactId>
+				<version>0.8.10</version>
+				<executions>
+					<execution>
+						<goals>
+							<goal>prepare-agent</goal>
+						</goals>
+					</execution>
+					<execution>
+						<id>report</id>
+						<phase>verify</phase>
+						<goals>
+							<goal>report</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<excludes>
+						<exclude>com/example/userapi/dto/*.class</exclude>
+						<exclude>com/example/userapi/mapper/*.class</exclude>
+						<exclude>com/example/userapi/entity/*.class</exclude>
+					</excludes>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-checkstyle-plugin</artifactId>
+				<version>3.6.0</version>
+				<executions>
+					<execution>
+						<id>validate</id>
+						<phase>validate</phase>
+						<configuration>
+							<configLocation>checkstyle.xml</configLocation>
+							<consoleOutput>true</consoleOutput>
+							<failsOnError>true</failsOnError>
+							<suppressionsLocation>
+								/Users/srihaanduttuluri/projects/userapi/checkstyle-supressions.xml
+							</suppressionsLocation>
+							<suppressionsFileExpression>
+								checkstyle.suppressions.file
+							</suppressionsFileExpression>
+							<skip>true</skip>
+						</configuration>
+
+						<goals>
+							<goal>check</goal>
+						</goals>
+					</execution>
+				</executions>
+
+
 			</plugin>
 		</plugins>
 	</build>

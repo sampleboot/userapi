@@ -9,9 +9,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 @Data
-public class UserDTO {
-
-    private Integer id;
+public class UserRequest {
 
     @NotBlank
     @Size(max = 30)
@@ -34,13 +32,9 @@ public class UserDTO {
     @Size(max = 100)
     private String titleText;
 
-    private Integer createUserId;
-
-    private LocalDateTime createDttm;
-
-    private Integer updateUserId;
-
+    @NotBlank
+    @Size(max = 30)
+    private String createUserId;
     private LocalDateTime updateDttm;
-
     private List<AddressDTO> addresses;
 }

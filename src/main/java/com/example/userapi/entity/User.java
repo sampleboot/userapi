@@ -1,8 +1,4 @@
 package com.example.userapi.entity;
-
-
-
-
 import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -10,7 +6,6 @@ import lombok.ToString;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import com.example.userapi.entity.Address;
 
 @Data
 @EqualsAndHashCode(exclude = "addresses")

@@ -1,0 +1,386 @@
+<?xml version="1.0"?>
+<!DOCTYPE module PUBLIC
+        "-//Puppy Crawl//DTD Check Configuration 1.3//EN"
+        "http://checkstyle.sourceforge.net/dtds/configuration_1_3.dtd">
+<!--
+    Checkstyle configuration that checks the Google coding conventions from Google Java Style
+    that can be found at https://google.github.io/styleguide/javaguide.html.
+    Checkstyle is very configurable. Be sure to read the documentation at
+    http://checkstyle.sf.net (or in your downloaded distribution).
+    To completely disable a check, just comment it out or delete it from the file.
+    Authors: Max Vetrenko, Ruslan Diachenko, Roman Ivanov.
+ -->
+<module name="Checker">
+    <property name="charset" value="UTF-8"/>
+    <property name="severity" value="error"/>
+    <property name="fileExtensions" value="java, properties, xml"/>
+    <!-- Checks for whitespace                               -->
+    <!-- See http://checkstyle.sf.net/config_whitespace.html -->
+    <module name="FileTabCharacter">
+        <property name="eachLine" value="true"/>
+    </module>
+
+    <!-- Java files should not exceed 999 lines-->
+    <module name="FileLength">
+        <property name="fileExtensions" value="java"/>
+        <property name="max" value="999"/>
+    </module>
+
+    <!-- Line length of 120 chars.-->
+    <module name="LineLength">
+        <property name="max" value="120"/>
+        <property name="ignorePattern" value="^package.*|^import.*|a href|href|http://|https://|ftp://"/>
+    </module>
+    <module name="SuppressionFilter">
+        <property name="file"
+                  value="${checkstyle.suppressions.file}"
+                  default="checkstyle-txn-suppressions.xml"/>
+    </module>
+    <module name="SuppressWarningsFilter"/>
+    <module name="TreeWalker">
+        <!-- Allow suppressing rules via comments. Explicitly specify which rule to suppress.-->
+        <module name="SuppressionCommentFilter">
+            <property name="offCommentFormat" value="CHECKSTYLE:OFF: (\w+)"/>
+            <property name="onCommentFormat" value="CHECKSTYLE:ON: (\w+)"/>
+            <property name="checkFormat" value="$1"/>
+        </module>
+
+        <!-- Class names must match the file name in which they are defined. -->
+        <module name="OuterTypeFilename"/>
+
+        <!-- Special escape sequences like \n and \t must be used over the octal or unicode equivalent. -->
+        <module name="IllegalTokenText">
+            <property name="tokens" value="STRING_LITERAL, CHAR_LITERAL"/>
+            <property name="format"
+                      value="\\u00(09|0(a|A)|0(c|C)|0(d|D)|22|27|5(C|c))|\\(0(10|11|12|14|15|42|47)|134)"/>
+            <property name="message"
+                      value="Consider using special escape sequence instead of octal value or Unicode escaped value."/>
+        </module>
+
+        <!-- Unicode escapes must not be used for printable characters. -->
+        <module name="AvoidEscapedUnicodeCharacters">
+            <property name="allowEscapesForControlCharacters" value="true"/>
+            <property name="allowByTailComment" value="true"/>
+            <property name="allowNonPrintableEscapes" value="true"/>
+        </module>
+
+
+        <!-- Stars must not be used in import statements. -->
+        <module name="AvoidStarImport"/>
+
+        <!-- Checks for unused imports. -->
+        <module name="UnusedImports"/>
+
+        <!-- Package name and imports must not be wrapped. -->
+        <module name="NoLineWrap"/>
+
+        <!-- Braces must be used for all blocks. -->
+        <module name="NeedBraces"/>
+
+        <!-- Braces must not be empty for most language constructs. -->
+        <module name="EmptyBlock">
+            <property name="option" value="TEXT"/>
+            <property name="tokens" value="LITERAL_TRY, LITERAL_FINALLY, LITERAL_IF, LITERAL_ELSE, LITERAL_SWITCH"/>
+        </module>
+
+        <!-- For language constructs related to the previous statement (eg. "else" or "catch"), the keywords must
+            be defined on the same line as the right curly brace. -->
+        <module name="RightCurly">
+            <property name="id" value="RightCurlySame"/>
+            <property name="tokens"
+                      value="LITERAL_TRY, LITERAL_CATCH, LITERAL_FINALLY, LITERAL_IF, LITERAL_ELSE, LITERAL_DO"/>
+        </module>
+
+        <!-- For other language constructs, they must be defined on a separate line. -->
+        <module name="RightCurly">
+            <property name="id" value="RightCurlyAlone"/>
+            <property name="option" value="alone"/>
+            <property name="tokens"
+                      value="CLASS_DEF, METHOD_DEF, CTOR_DEF, LITERAL_FOR, LITERAL_WHILE, STATIC_INIT, INSTANCE_INIT"/>
+        </module>
+
+        <!-- Language constructs like "if" and "while" must be followed by whitespace. -->
+        <module name="WhitespaceAfter"/>
+
+
+        <!-- Language constructs must be surrounded by whitespace. -->
+        <module name="WhitespaceAround">
+            <property name="allowEmptyConstructors" value="true"/>
+            <property name="allowEmptyMethods" value="true"/>
+            <property name="allowEmptyTypes" value="true"/>
+            <property name="allowEmptyLoops" value="true"/>
+        </module>
+
+
+        <!-- Only one statement per line is permitted. -->
+        <module name="OneStatementPerLine"/>
+
+        <!-- Variables must be defined on different lines. -->
+        <module name="MultipleVariableDeclarations"/>
+
+        <!-- No C-style array declarations are permitted (eg. String args[]). -->
+        <module name="ArrayTypeStyle"/>
+
+        <!-- Defaults must always be included for switch statements, even if they are empty. -->
+        <module name="MissingSwitchDefault"/>
+
+        <!-- Case blocks with statements on them must include a break, return, etc. or the comment "fall through". -->
+        <module name="FallThrough"/>
+
+        <!-- When defining long literals, an upper L must be used. -->
+        <module name="UpperEll"/>
+
+        <!-- Modifiers like public, abstract, static, etc. must follow a consistent order. -->
+        <module name="ModifierOrder"/>
+
+        <module name="EmptyLineSeparator">
+            <property name="allowNoEmptyLineBetweenFields" value="true"/>
+            <property name="allowMultipleEmptyLines" value="false"/>
+        </module>
+
+        <!-- New lines must happen before dots. -->
+        <module name="SeparatorWrap">
+            <property name="id" value="SeparatorWrapDot"/>
+            <property name="tokens" value="DOT"/>
+            <property name="option" value="nl"/>
+        </module>
+
+        <!-- New lines must happen after commas. -->
+        <module name="SeparatorWrap">
+            <property name="id" value="SeparatorWrapComma"/>
+            <property name="tokens" value="COMMA"/>
+            <property name="option" value="EOL"/>
+        </module>
+
+        <!-- Package names must follow a defined format. -->
+        <module name="PackageName">
+            <property name="format" value="^[a-z]+(\.[a-z][a-z0-9]*)*$"/>
+            <message key="name.invalidPattern"
+                     value="Package name ''{0}'' must match pattern ''{1}''."/>
+        </module>
+
+        <!-- Type names must follow a defined format. -->
+        <module name="TypeName">
+            <message key="name.invalidPattern"
+                     value="Type name ''{0}'' must match pattern ''{1}''."/>
+        </module>
+
+        <!-- Non-constant fields must follow a defined format. -->
+        <module name="MemberName">
+            <property name="format" value="^[a-z][a-zA-Z0-9]*$"/>
+            <message key="name.invalidPattern"
+                     value="Member name ''{0}'' must match pattern ''{1}''."/>
+        </module>
+
+        <!-- Constant fields must follow a defined format. -->
+        <module name="ConstantName">
+            <property name="format" value="^log?|[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$"/>
+        </module>
+
+        <!-- Method and lambda parameters must follow a defined format. -->
+        <module name="ParameterName">
+            <property name="id" value="ParameterNameNonPublic"/>
+            <property name="format" value="^[a-z]([a-zA-Z0-9]*)?$"/>
+            <property name="accessModifiers" value="protected, package, private"/>
+            <message key="name.invalidPattern"
+                     value="Parameter name ''{0}'' must match pattern ''{1}''."/>
+        </module>
+        <module name="ParameterName">
+            <property name="id" value="ParameterNamePublic"/>
+            <property name="format" value="^[a-z][a-zA-Z0-9]*$"/>
+            <property name="accessModifiers" value="public"/>
+            <message key="name.invalidPattern"
+                     value="Parameter name ''{0}'' must match pattern ''{1}''."/>
+        </module>
+
+        <!-- Catch parameters must follow a defined format. -->
+        <module name="CatchParameterName">
+            <property name="format" value="^(e|t|[a-z][a-zA-Z0-9]*)$"/>
+            <message key="name.invalidPattern"
+                     value="Catch parameter name ''{0}'' must match pattern ''{1}''."/>
+        </module>
+
+        <!-- Local variables must follow a defined format. -->
+        <module name="LocalVariableName">
+            <property name="tokens" value="VARIABLE_DEF"/>
+            <property name="format" value="^[a-z][a-zA-Z0-9]*$"/>
+            <property name="allowOneCharVarInForLoop" value="true"/>
+            <message key="name.invalidPattern"
+                     value="Local variable name ''{0}'' must match pattern ''{1}''."/>
+        </module>
+
+        <!-- Type parameters must follow a defined format. -->
+        <module name="ClassTypeParameterName">
+            <property name="format" value="(^[A-Z][0-9]?)$|([A-Z][a-zA-Z0-9]*[T]$)"/>
+            <message key="name.invalidPattern"
+                     value="Class type name ''{0}'' must match pattern ''{1}''."/>
+        </module>
+        <module name="MethodTypeParameterName">
+            <property name="format" value="(^[A-Z][0-9]?)$|([A-Z][a-zA-Z0-9]*[T]$)"/>
+            <message key="name.invalidPattern"
+                     value="Method type name ''{0}'' must match pattern ''{1}''."/>
+        </module>
+        <module name="InterfaceTypeParameterName">
+            <property name="format" value="(^[A-Z][0-9]?)$|([A-Z][a-zA-Z0-9]*[T]$)"/>
+            <message key="name.invalidPattern"
+                     value="Interface type name ''{0}'' must match pattern ''{1}''."/>
+        </module>
+
+        <!-- Method names must follow a defined format. -->
+        <module name="MethodName">
+            <property name="format" value="^[a-z][a-zA-Z0-9]*$"/>
+            <message key="name.invalidPattern"
+                     value="Method name ''{0}'' must match pattern ''{1}''."/>
+        </module>
+
+        <!-- Finalizers must not be overridden. -->
+        <module name="NoFinalizer"/>
+
+        <!-- Whitespace around generics must follow a defined format. -->
+        <module name="GenericWhitespace"/>
+
+        <!-- Indent -->
+        <module name="Indentation">
+            <property name="basicOffset" value="4"/>
+            <property name="braceAdjustment" value="0"/>
+            <property name="caseIndent" value="4"/>
+            <property name="throwsIndent" value="8"/>
+            <property name="lineWrappingIndentation" value="4"/>
+            <property name="arrayInitIndent" value="4"/>
+        </module>
+
+
+        <!--Abbreviations can only be used for upto 9 chars.-->
+        <module name="AbbreviationAsWordInName">
+            <property name="ignoreFinal" value="false"/>
+            <property name="allowedAbbreviationLength" value="9"/>
+        </module>
+
+        <!-- Class contents must be defined in the order suggested by Sun/Oracle:
+             http://www.oracle.com/technetwork/java/javase/documentation/codeconventions-141855.html#1852 -->
+        <module name="DeclarationOrder"/>
+
+
+        <!--Overloaded methods must be declared together -->
+        <module name="OverloadMethodsDeclarationOrder"/>
+
+        <!-- Variables must be declared near where they are used. -->
+        <module name="VariableDeclarationUsageDistance">
+            <property name="allowedDistance" value="10"/>
+        </module>
+
+        <!-- Static imports must occur before external package imports.
+        Followed by Standard Java packages, 3rd party packages, com.walmart -->
+        <module name="CustomImportOrder">
+            <property name="sortImportsInGroupAlphabetically" value="true"/>
+            <property name="separateLineBetweenGroups" value="true"/>
+            <property name="customImportOrderRules"
+                      value="STATIC###STANDARD_JAVA_PACKAGE###THIRD_PARTY_PACKAGE###SPECIAL_IMPORTS"/>
+            <property name="thirdPartyPackageRegExp" value="^(io|org|lombok|net)\."/>
+            <property name="specialImportsRegExp" value="^(com|com.walmart|com.walmartlabs).*"/>
+        </module>
+
+        <!-- Method names must be specified on the same line as their parameter list. -->
+        <module name="MethodParamPad"/>
+
+        <!-- There must be no space between a method name and its parameter list. -->
+        <module name="ParenPad"/>
+
+        <module name="NoWhitespaceBefore">
+            <property name="tokens"
+                      value="METHOD_REF, DOT, COMMA , SEMI , POST_INC , POST_DEC , ELLIPSIS , LABELED_STAT"/>
+            <property name="allowLineBreaks" value="true"/>
+        </module>
+
+        <!-- Annotations on seperate lines. -->
+        <module name="AnnotationLocation">
+            <property name="allowSamelineSingleParameterlessAnnotation" value="false"/>
+        </module>
+
+        <!-- Catch blocks must not be empty without a comment. -->
+        <module name="EmptyCatchBlock"/>
+
+        <!-- Comments must be placed at the same indentation level as the surrounding code. -->
+        <module name="CommentsIndentation"/>
+
+        <!-- Checks for imports of certain packages           -->
+        <!-- See http://checkstyle.sf.net/config_imports.html -->
+        <module name="IllegalImport">
+            <property name="illegalPkgs" value="sun,org.apache.http.annotation,javax.annotation.Generated"/>
+        </module>
+
+        <!-- Checks that the override annotation is specified when using @inheritDoc javadoc. -->
+        <module name="MissingOverride"/>
+
+        <!-- Checks that we don't use System.out.print -->
+        <module name="Regexp">
+            <property name="format" value="System\s*\.\s*(out|err)\s*(\.|::)\s*print"/>
+            <property name="illegalPattern" value="true"/>
+            <property name="message" value="Don't use System console for logging, use a logger instead"/>
+            <property name="ignoreComments" value="true"/>
+        </module>
+
+        <!-- Checks that we don't use System.getenv or System.getProperty -->
+        <module name="Regexp">
+            <property name="format" value="System\s*(\.|::)\s*(getenv|getProperty)"/>
+            <property name="illegalPattern" value="true"/>
+            <property name="message"
+                      value="NEVER use System.getenv or System.getProperty. Create and use a Property/CCM instead."/>
+            <property name="ignoreComments" value="true"/>
+        </module>
+
+        <module name="Regexp">
+            <property name="format" value="SystemSetting\s*(\.|::)\s*getStringValueFromEnvironmentVariable"/>
+            <property name="illegalPattern" value="true"/>
+            <property name="message" value="Are you being naughty and not creating a SystemSetting? Don't you know that
+            your customers want both system properties AND environment variables? Are you REALLY sure you want to use
+            this and not support a system property?"/>
+            <property name="ignoreComments" value="true"/>
+        </module>
+
+        <!-- Checks for redundant public modifier on interfaces and other redundant modifiers -->
+        <module name="RedundantModifier"/>
+
+        <!-- Checks for utility and constants classes to have private constructor-->
+        <module name="HideUtilityClassConstructor"/>
+
+
+        <!-- Lambda body must not exceed 10 lines-->
+        <module name="LambdaBodyLength">
+            <property name="max" value="10"/>
+        </module>
+
+        <!-- Single class cannot have more than 30 methods; or 10 public methods. -->
+        <module name="MethodCount">
+            <property name="maxPublic" value="10"/>
+            <property name="maxTotal" value="30"/>
+        </module>
+
+        <!-- Do not exceed 99 lines per method. -->
+        <module name="MethodLength">
+            <property name="max" value="99"/>
+            <property name="countEmpty" value="false"/>
+        </module>
+
+        <!-- Not more than 7 params.-->
+        <module name="ParameterNumber">
+            <property name="max" value="7"/>
+        </module>
+
+        <!-- Record types should not have more than 10 components.-->
+        <module name="RecordComponentNumber">
+            <property name="max" value="10"/>
+        </module>
+
+        <!-- Max 5 boolean conditions.-->
+        <module name="BooleanExpressionComplexity">
+            <property name="max" value="5"/>
+        </module>
+
+        <!-- >=10 complexity is considered very hard to test.-->
+        <module name="CyclomaticComplexity">
+            <property name="max" value="10"/>
+        </module>
+        <module name="SuppressWarningsHolder"/>
+    </module>
+</module>

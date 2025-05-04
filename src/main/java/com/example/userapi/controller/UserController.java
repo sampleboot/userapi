@@ -1,6 +1,7 @@
 package com.example.userapi.controller;
 
-import com.example.userapi.dto.UserDTO;
+import com.example.userapi.dto.UserRequest;
+import com.example.userapi.dto.UserResponse;
 import com.example.userapi.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -11,7 +12,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-
 @RestController
 @RequestMapping("/users")
 @RequiredArgsConstructor
@@ -20,19 +20,20 @@ public class UserController {
 
     private final UserService userService;
 
-
     @PostMapping
-    public ResponseEntity<UserDTO> createUser(@Valid @RequestBody UserDTO userDTO) {
+    public ResponseEntity<UserResponse> createUser(@Valid @RequestBody UserRequest userDTO) {
         log.info("Creating user: {}", userDTO);
-        return ResponseEntity.status(HttpStatus.CREATED).body(userService.createUser(userDTO));
-
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(userService.createUser(userDTO));
     }
 
     @PutMapping("/{userId}")
-    public ResponseEntity<UserDTO> updateUser(@PathVariable String userId,
-                                              @Valid @RequestBody UserDTO userDTO) {
+    public ResponseEntity<UserResponse> updateUser(
+            @PathVariable String userId,
+            @Valid @RequestBody UserRequest userDTO) {
         log.info("Updating user {}: {}", userId, userDTO);
-        return ResponseEntity.ok(userService.updateUser(userId, userDTO));
+        UserResponse user = userService.updateUser(userId, userDTO);
+        return ResponseEntity.ok(user);
     }
 
     @DeleteMapping("/{userId}")
@@ -43,14 +44,22 @@ public class UserController {
     }
 
     @GetMapping("/supervisor/{supervisorUserId}")
-    public ResponseEntity<List<UserDTO>> getUsersBySupervisor(@PathVariable String supervisorUserId) {
+    public ResponseEntity<List<UserResponse>> getUsersBySupervisor(
+            @PathVariable String supervisorUserId) {
         return ResponseEntity.ok(userService.getUsersBySupervisor(supervisorUserId));
     }
 
-    @PatchMapping("/{userId}/supervisor/{supervisorUserId}")
-    public ResponseEntity<UserDTO> updateSupervisor(@PathVariable String userId,
-                                                    @PathVariable String supervisorUserId) {
+    @GetMapping("/{userId}")
+    public ResponseEntity<UserResponse> getUserByUserId(
+            @PathVariable String userId) {
+        return ResponseEntity.ok(userService.getUserInfoByUserId(userId));
+    }
 
+
+    @PatchMapping("/{userId}/supervisor/{supervisorUserId}")
+    public ResponseEntity<UserResponse> updateSupervisor(
+            @PathVariable String userId,
+            @PathVariable String supervisorUserId) {
         return ResponseEntity.ok(userService.updateSupervisor(userId, supervisorUserId));
     }
 }

@@ -1,19 +1,25 @@
 package com.example.userapi.mapper;
 
-import com.example.userapi.dto.UserDTO;
+import com.example.userapi.dto.UserRequest;
+import com.example.userapi.dto.UserResponse;
 import com.example.userapi.entity.User;
-import org.mapstruct.*;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.MappingTarget;
+import org.mapstruct.NullValuePropertyMappingStrategy;
 
 
-
-@Mapper(componentModel = "spring", uses = { AddressMapper.class },
+@Mapper(componentModel = "spring", uses = {AddressMapper.class},
         nullValuePropertyMappingStrategy = NullValuePropertyMappingStrategy.IGNORE)
 public interface UserMapper {
 
-    UserDTO toDTO(User user);
+    //UserDTO toDTO(User user);
+    UserResponse toUserResponseDTO(User user);
 
-    User toEntity(UserDTO userDTO);
+    @Mapping(target = "createUserId", ignore = true)
+    User toEntity(UserRequest userRequest);
 
     // For partial update
-    void updateUserFromDto(UserDTO dto, @MappingTarget User entity);
+    @Mapping(target = "createUserId", ignore = true)
+    void updateUserFromDto(UserRequest dto, @MappingTarget User entity);
 }

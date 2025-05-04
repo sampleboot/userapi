@@ -29,6 +29,10 @@ public class SecurityConfig {
                 .password("{noop}password")
                 .roles("USER")
                 .build());
+        manager.createUser(User.withUsername("testuser")
+                .password("{noop}password")
+                .roles("USER")
+                .build());
         return manager;
     }
 
@@ -40,6 +44,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/users").hasRole("ADMIN")
                         .requestMatchers(HttpMethod.PUT, "/api/users/**").hasAnyRole("ADMIN", "USER")
                         .requestMatchers(HttpMethod.DELETE, "/api/users/**").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/users/**").hasAnyRole("ADMIN", "USER")
                         .requestMatchers("/h2-console/**").permitAll()
                         .anyRequest().authenticated()
                 )
