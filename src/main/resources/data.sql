@@ -1,15 +1,12 @@
--- Insert sample users
-INSERT INTO "user" (
-     user_id, last_name, first_name, email_address,
-    supervisor_user_id, title_text, create_user_id, create_dttm,
-    update_user_id, update_dttm
-) VALUES
-      ( 'super123', 'Smith', 'Anna', 'anna.smith@example.com', null, 'Director', 1, now(), 1, now()),
-      ( 'john123', 'Doe', 'John', 'john.doe@example.com', 'super123', 'Developer', 1, now(), 1, now()),
-      ('jane456', 'Roe', 'Jane', 'jane.roe@example.com', 'super123', 'Analyst', 1, now(), 1, now()),
-      ('pdutt234', 'Dutt', 'pras', 'pras.dutt@example.com', 'super123', 'Director2', 1, now(), 1, now());
+INSERT INTO "user" (user_id, last_name, first_name, email_address,
+                    supervisor_user_id, title_text, create_user_id, create_dttm,
+                    update_user_id, update_dttm)
+VALUES ('super123', 'Smith', 'Anna', 'anna.smith@example.com', null, 'Director', 1, now(), 1, now()),
+       ('john123', 'Doe', 'John', 'john.doe@example.com', 'super123', 'Developer', 1, now(), 1, now()),
+       ('jane456', 'Roe', 'Jane', 'jane.roe@example.com', 'super123', 'Analyst', 1, now(), 1, now()),
+       ('pdutt234', 'Dutt', 'pras', 'pras.dutt@example.com', 'super123', 'Director2', 1, now(), 1, now()),
+       ('testuser', 'test', 'user', 'pras.dutt@example.com', 'super123', 'Director2', 1, now(), 1, now());
 ;
-
 -- Insert sample addresses
 INSERT INTO address (
      mobile_phone, other_phone, location, street_address, street_address_2,

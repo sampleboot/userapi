@@ -47,7 +47,7 @@ public class User {
     @Column(name = "update_dttm", nullable = false)
     private LocalDateTime updateDttm = LocalDateTime.now();
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY,orphanRemoval = true)
     @ToString.Exclude
     private List<Address> addresses;
 
